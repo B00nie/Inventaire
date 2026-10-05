@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Dashboard - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/relatorios.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/relatorios-comum.js" defer></script>
+    <script src="js/dashboard.js" defer></script>
+</head>
+
+<body class="app-layout" data-page="dashboard">
+    <aside class="sidebar"><div class="brand"><i class="fa-solid fa-warehouse"></i><span>Inventaire</span></div>
+        <ul class="nav">
+            <li><a data-page="dashboard" href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a data-page="inventory" href="inventario.html"><i class="fa-solid fa-boxes-stacked"></i><span>Inventário</span></a></li>
+            <li><a data-page="movements" href="movimentacoes.html"><i class="fa-solid fa-right-left"></i><span>Movimentações</span></a></li>
+            <li><a data-page="locations" href="localizacoes.html"><i class="fa-solid fa-location-dot"></i><span>Localizações</span></a></li>
+            <li><a data-page="counts" href="contagens.html"><i class="fa-solid fa-clipboard-check"></i><span>Contagens</span></a></li>
+            <li><a data-page="suppliers" href="fornecedores.html"><i class="fa-solid fa-truck-field"></i><span>Fornecedores</span></a></li>
+            <li><a data-page="reports" href="relatorios.html"><i class="fa-solid fa-file-lines"></i><span>Relatórios</span></a></li>
+            <li><a data-page="admin" href="administracao.html"><i class="fa-solid fa-users-gear"></i><span>Administração</span></a></li>
+            <li><a data-page="settings" href="configuracao.html"><i class="fa-solid fa-gear"></i><span>Configurações</span></a></li>
+            <li><a data-page="profile" href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu Perfil</span></a></li>
+            <li><a class="logout" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Dashboard</h1>
+                <p class="text-muted">Indicadores do inventário calculados pelo servidor a partir dos dados registrados.</p>
+            </div>
+
+<div class="top-actions">
+    <div class="search-global">
+        <input id="globalSearch" placeholder="Pesquisar no sistema">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="user-chip" id="userChip"></div>
+</div>
+
+        </div>
+
+<div class="dashboard-bar">
+    <p id="dashboardStatus" role="status" aria-live="polite">Carregando indicadores...</p>
+    <button class="btn secondary" id="dashboardRefresh" type="button"><i class="fa-solid fa-rotate"></i>Atualizar</button>
+</div>
+
+<section class="grid dashboard-kpis" aria-label="Indicadores do inventário" aria-busy="true" id="dashboardKpis">
+    <a class="card kpi dashboard-kpi" id="kpiProdutos" href="relatorios.html#posicao">
+        <i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>
+        <h3>Produtos cadastrados</h3>
+        <strong data-kpi-value>—</strong>
+        <small data-kpi-state>Carregando...</small>
+        <small class="kpi-source">Fonte: cadastro de produtos</small>
+    </a>
+    <a class="card kpi dashboard-kpi" id="kpiUnidades" href="relatorios.html#posicao">
+        <i class="fa-solid fa-cubes" aria-hidden="true"></i>
+        <h3>Unidades em estoque</h3>
+        <strong data-kpi-value>—</strong>
+        <small data-kpi-state>Carregando...</small>
+        <small class="kpi-source">Fonte: soma dos saldos globais</small>
+    </a>
+    <a class="card kpi dashboard-kpi" id="kpiBaixo" href="relatorios.html#reposicao">
+        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+        <h3>No limite ou abaixo do mínimo</h3>
+        <strong data-kpi-value>—</strong>
+        <small data-kpi-state>Carregando...</small>
+        <small class="kpi-source">Critério: saldo ≤ estoque mínimo</small>
+    </a>
+    <a class="card kpi dashboard-kpi" id="kpiDivergencias" href="relatorios.html?situacao=PENDENTE#divergencias">
+        <i class="fa-solid fa-clipboard-check" aria-hidden="true"></i>
+        <h3>Divergências pendentes</h3>
+        <strong data-kpi-value>—</strong>
+        <small data-kpi-state>Carregando...</small>
+        <small class="kpi-source">Fonte: contagens com divergência não aplicadas</small>
+    </a>
+    <a class="card kpi dashboard-kpi" id="kpiMovimentacoes" href="relatorios.html#movimentacoes">
+        <i class="fa-solid fa-right-left" aria-hidden="true"></i>
+        <h3>Movimentações (30 dias)</h3>
+        <strong data-kpi-value>—</strong>
+        <small data-kpi-state>Carregando...</small>
+        <small class="kpi-source">Fonte: histórico de movimentações</small>
+    </a>
+</section>
+
+<div class="grid dashboard-panels">
+    <article class="card table-card">
+        <div class="table-head">
+            <h2>Reposição sugerida</h2>
+            <a class="btn secondary" href="relatorios.html#reposicao">Relatório completo</a>
+        </div>
+        <p class="text-muted dashboard-note">Maiores sugestões primeiro. Sugestão = mínimo − saldo (nunca negativa). Não gera pedido de compra.</p>
+        <div class="table-wrap"><table class="dashboard-table">
+            <caption class="sr-only">Produtos no limite ou abaixo do estoque mínimo</caption>
+            <thead><tr><th scope="col">Produto / SKU</th><th scope="col">Saldo</th><th scope="col">Mínimo</th><th scope="col">Situação</th><th scope="col">Sugestão</th></tr></thead>
+            <tbody id="dashboardReposicao"><tr><td colspan="5" class="empty">Carregando...</td></tr></tbody>
+        </table></div>
+    </article>
+
+    <article class="card table-card">
+        <div class="table-head">
+            <h2>Divergências pendentes</h2>
+            <a class="btn secondary" href="relatorios.html?situacao=PENDENTE#divergencias">Relatório completo</a>
+        </div>
+        <p class="text-muted dashboard-note">Mais recentes primeiro. Valores do instante da contagem (snapshot); divergência = físico − sistêmico.</p>
+        <div class="table-wrap"><table class="dashboard-table">
+            <caption class="sr-only">Contagens com divergência ainda não aplicadas</caption>
+            <thead><tr><th scope="col">Data/Hora</th><th scope="col">Produto / SKU</th><th scope="col">Local / lote</th><th scope="col">Sistêmico</th><th scope="col">Físico</th><th scope="col">Divergência</th></tr></thead>
+            <tbody id="dashboardDivergencias"><tr><td colspan="6" class="empty">Carregando...</td></tr></tbody>
+        </table></div>
+    </article>
+</div>
+
+<article class="card table-card dashboard-wide">
+    <div class="table-head">
+        <h2>Movimentações recentes</h2>
+        <a class="btn secondary" href="relatorios.html#movimentacoes">Relatório por período</a>
+    </div>
+    <p class="text-muted dashboard-note">Últimos eventos do histórico imutável, ordenados por data/hora e número (mais recentes primeiro).</p>
+    <div class="table-wrap"><table class="dashboard-table dashboard-moves">
+        <caption class="sr-only">Movimentações mais recentes</caption>
+        <thead><tr><th scope="col">Data/Hora</th><th scope="col">Produto / SKU</th><th scope="col">Tipo</th><th scope="col">Quantidade</th><th scope="col">Saldo global</th><th scope="col">Local / lote</th><th scope="col">Responsável</th></tr></thead>
+        <tbody id="dashboardMovimentacoes"><tr><td colspan="7" class="empty">Carregando...</td></tr></tbody>
+    </table></div>
+</article>
+
+<article class="card table-card dashboard-wide">
+    <div class="table-head"><h2>Movimentações nos últimos 30 dias, por tipo</h2></div>
+    <p class="text-muted dashboard-note">Janela calculada com o relógio do servidor. Variação líquida = soma de (saldo posterior − saldo anterior). Ajustes não têm "unidades movimentadas".</p>
+    <div class="table-wrap"><table class="dashboard-table">
+        <caption class="sr-only">Resumo das movimentações dos últimos 30 dias</caption>
+        <thead><tr><th scope="col">Tipo</th><th scope="col">Eventos</th><th scope="col">Unidades</th><th scope="col">Variação líquida</th></tr></thead>
+        <tbody id="dashboardJanela"><tr><td colspan="4" class="empty">Carregando...</td></tr></tbody>
+    </table></div>
+</article>
+
+    </main>
+
+    <div id="toastContainer" class="toast-container"></div>
+</body>
+</html>

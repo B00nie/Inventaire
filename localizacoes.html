@@ -1,0 +1,90 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Localizações - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/movimentacoes.css">
+    <link rel="stylesheet" href="css/localizacoes.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    
+    <script src="js/common.js" defer></script>
+    <script src="js/localizacoes.js" defer></script>
+</head>
+
+<body class="app-layout" data-page="locations">
+    <aside class="sidebar"><div class="brand"><i class="fa-solid fa-warehouse"></i><span>Inventaire</span></div>
+        <ul class="nav">
+            <li><a data-page="dashboard" href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a data-page="inventory" href="inventario.html"><i class="fa-solid fa-boxes-stacked"></i><span>Inventário</span></a></li>
+            <li><a data-page="movements" href="movimentacoes.html"><i class="fa-solid fa-right-left"></i><span>Movimentações</span></a></li>
+            <li><a data-page="locations" href="localizacoes.html"><i class="fa-solid fa-location-dot"></i><span>Localizações</span></a></li>
+            <li><a data-page="counts" href="contagens.html"><i class="fa-solid fa-clipboard-check"></i><span>Contagens</span></a></li>
+            <li><a data-page="suppliers" href="fornecedores.html"><i class="fa-solid fa-truck-field"></i><span>Fornecedores</span></a></li>
+            <li><a data-page="reports" href="relatorios.html"><i class="fa-solid fa-file-lines"></i><span>Relatórios</span></a></li>
+            <li><a data-page="admin" href="administracao.html"><i class="fa-solid fa-users-gear"></i><span>Administração</span></a></li>
+            <li><a data-page="settings" href="configuracao.html"><i class="fa-solid fa-gear"></i><span>Configurações</span></a></li>
+            <li><a data-page="profile" href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu Perfil</span></a></li>
+            <li><a class="logout" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Localizações</h1>
+                <p class="text-muted">Consulte corredores, posições e lotes físicos do depósito.</p>
+            </div>
+
+            
+<div class="top-actions">
+    <div class="search-global">
+        <input id="globalSearch" placeholder="Pesquisar no sistema">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="user-chip" id="userChip"></div>
+</div>
+
+        </div>
+
+        
+<article class="card">
+ <div class="table-head"><h2>Corredores</h2><button class="btn secondary" id="refreshLocations" type="button">Atualizar</button></div>
+ <p id="locationFeedback" role="status" aria-live="polite"></p>
+ <div class="table-wrap"><table><thead><tr><th>Corredor</th><th>Ocupação / capacidade</th><th>Status</th><th>Consultar</th><th>Ações</th></tr></thead><tbody id="corridorsBody"><tr><td colspan="5">Carregando...</td></tr></tbody></table></div>
+</article>
+<article class="card location-section"><h2>Posições</h2><div class="table-wrap"><table><thead><tr><th>Posição</th><th>Corredor</th><th>Status</th><th>Ações</th></tr></thead><tbody id="positionsBody"></tbody></table></div></article>
+<article class="card location-section"><h2>Produtos e lotes armazenados</h2>
+ <p id="productFilterNote" hidden>Consulta limitada ao produto selecionado. <a href="localizacoes.html">Ver todos os produtos</a></p>
+ <form id="searchLocationsForm"><div class="grid movement-filters">
+ <div class="form-group"><label for="locationSearch">Pesquisar nome, SKU, lote, posição ou corredor</label><input id="locationSearch" maxlength="200"></div>
+ <div class="form-group"><label for="locationCorridor">Corredor</label><select id="locationCorridor"><option value="">Todos</option></select></div>
+ <div class="form-group"><label for="locationPosition">Posição</label><select id="locationPosition"><option value="">Todas</option></select></div>
+ </div><button class="btn" type="submit">Pesquisar</button></form>
+ <div class="table-wrap"><table class="location-table"><thead><tr><th>Produto</th><th>SKU</th><th>Corredor</th><th>Posição</th><th>Lote</th><th>Quantidade</th><th>Status</th><th>Ações</th></tr></thead><tbody id="locationItems"><tr><td colspan="8">Selecione Atualizar para consultar.</td></tr></tbody></table></div>
+</article>
+<div class="grid location-forms" data-permission="locations:manage">
+ <article class="card"><h2>Cadastrar / editar corredor</h2><form id="corridorForm"><fieldset id="corridorFields" disabled>
+ <input id="corridorId" type="hidden"><div class="form-group"><label for="corridorName">Identificação</label><input id="corridorName" required></div>
+ <div class="form-group"><label for="corridorCapacity">Capacidade (unidades)</label><input id="corridorCapacity" type="number" min="1" max="2147483647" step="1" required></div>
+ <div class="form-group"><label><input id="corridorActive" type="checkbox" checked> Ativo</label></div>
+ <button type="submit" class="btn">Salvar corredor</button> <button type="reset" class="btn secondary">Limpar / novo</button>
+ </fieldset></form></article>
+ <article class="card"><h2>Cadastrar / editar posição</h2><form id="positionForm"><fieldset id="positionFields" disabled>
+ <input id="positionId" type="hidden"><div class="form-group"><label for="positionCode">Código da posição</label><input id="positionCode" required></div>
+ <div class="form-group"><label for="positionCorridor">Corredor</label><select id="positionCorridor" required><option value="">Selecione</option></select><small>Após o cadastro, o corredor da posição é fixo.</small></div>
+ <div class="form-group"><label><input id="positionActive" type="checkbox" checked> Ativa</label></div>
+ <button type="submit" class="btn">Salvar posição</button> <button type="reset" class="btn secondary">Limpar / nova</button>
+ </fieldset></form></article>
+</div>
+    </main>
+    <div id="toastContainer" class="toast-container"></div>
+</body>
+</html>

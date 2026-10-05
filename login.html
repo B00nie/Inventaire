@@ -1,0 +1,94 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Login - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/auth.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/login.js" defer></script>
+</head>
+
+<body>
+    <main class="auth-page">
+        <section class="auth-hero">
+            <div class="auth-content">
+                <div class="auth-brand">
+                    <i class="fa-solid fa-warehouse"></i>
+                    Inventaire
+                </div>
+
+                <h1>Seu estoque organizado. Seu depósito sob controle.</h1>
+
+                <p>
+                    Gestão de inventário e controle de estoque em um só lugar.
+                    Organize o depósito e acompanhe o histórico
+                    de entradas e saídas de produtos.
+                </p>
+
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <i class="fa-solid fa-boxes-stacked"></i>
+                        Gestão de inventário e controle de estoque
+                    </div>
+
+                    <div class="auth-feature">
+                        <i class="fa-solid fa-warehouse"></i>
+                        Organização dos produtos do depósito
+                    </div>
+
+                    <div class="auth-feature">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                        Histórico de entradas, saídas e ajustes
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="auth-panel">
+            <div class="auth-card">
+                <h2>Acessar o Inventaire</h2>
+                <p class="text-muted">Entre com seu e-mail corporativo e senha.</p>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>E-mail</label>
+                        <input name="email" type="email" autocomplete="username" required>
+                    </div>
+
+                    <div class="form-group password-field">
+                        <label>Senha</label>
+                        <input name="password" id="loginPassword" type="password" autocomplete="current-password" required>
+
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="auth-options">
+                        <label>
+                            <input type="checkbox" id="rememberLogin" disabled title="Duração da sessão definida pelo sistema">
+                            Sessão gerenciada pelo sistema
+                        </label>
+
+                        <a href="#" id="forgotPassword">Esqueci minha senha</a>
+                    </div>
+
+                    <button type="submit" class="btn auth-submit">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Entrar
+                    </button>
+
+                    <div class="auth-message" id="loginMessage"></div>
+                </form>
+            </div>
+        </section>
+    </main>
+</body>
+</html>

@@ -1,0 +1,93 @@
+﻿<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Movimentações - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/movimentacoes.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    
+    <script src="js/common.js" defer></script>
+    <script src="js/movimentacoes.js" defer></script>
+</head>
+
+<body class="app-layout" data-page="movements">
+    <aside class="sidebar"><div class="brand"><i class="fa-solid fa-warehouse"></i><span>Inventaire</span></div>
+        <ul class="nav">
+            <li><a data-page="dashboard" href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a data-page="inventory" href="inventario.html"><i class="fa-solid fa-boxes-stacked"></i><span>Inventário</span></a></li>
+            <li><a data-page="movements" href="movimentacoes.html"><i class="fa-solid fa-right-left"></i><span>Movimentações</span></a></li>
+            <li><a data-page="locations" href="localizacoes.html"><i class="fa-solid fa-location-dot"></i><span>Localizações</span></a></li>
+            <li><a data-page="counts" href="contagens.html"><i class="fa-solid fa-clipboard-check"></i><span>Contagens</span></a></li>
+            <li><a data-page="suppliers" href="fornecedores.html"><i class="fa-solid fa-truck-field"></i><span>Fornecedores</span></a></li>
+            <li><a data-page="reports" href="relatorios.html"><i class="fa-solid fa-file-lines"></i><span>Relatórios</span></a></li>
+            <li><a data-page="admin" href="administracao.html"><i class="fa-solid fa-users-gear"></i><span>Administração</span></a></li>
+            <li><a data-page="settings" href="configuracao.html"><i class="fa-solid fa-gear"></i><span>Configurações</span></a></li>
+            <li><a data-page="profile" href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu Perfil</span></a></li>
+            <li><a class="logout" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Movimentações</h1>
+                <p class="text-muted">Registre entradas, saídas e ajustes e acompanhe o histórico do estoque.</p>
+            </div>
+
+            
+<div class="top-actions">
+    <div class="search-global">
+        <input id="globalSearch" placeholder="Pesquisar no sistema">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="user-chip" id="userChip"></div>
+</div>
+
+        </div>
+
+        
+<article class="card" id="movementRegister" data-permission="movements:create">
+    <div class="section-title"><h2>Registrar movimentação</h2></div>
+    <form id="movementForm">
+        <fieldset id="movementFields" disabled>
+            <div class="grid movement-form-grid">
+                <div class="form-group"><label for="movementProduct">Produto</label><select id="movementProduct" required><option value="">Carregando produtos...</option></select></div>
+                <div class="form-group"><label for="movementType">Operação</label><select id="movementType"><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option><option value="AJUSTE">Ajuste</option></select></div>
+                <div id="entryDestination">
+                    <div class="form-group"><label for="movementPosition">Posição de destino</label><select id="movementPosition" required><option value="">Carregando...</option></select></div>
+                    <div class="form-group"><label for="movementLot">Lote</label><input id="movementLot" required></div>
+                    <div class="form-group"><label for="movementSupplier">Fornecedor de origem (opcional)</label><select id="movementSupplier"><option value="">Sem fornecedor</option></select><small id="movementSupplierNote" class="text-muted movement-supplier-note">Somente fornecedores ativos. A razão social e o CNPJ ficam registrados no histórico desta Entrada.</small></div>
+                </div>
+                <div id="exitDestination" class="form-group" hidden><label for="movementItem">Lote / posição a movimentar</label><select id="movementItem"><option value="">Selecione o produto</option></select></div>
+                <div class="form-group"><label id="movementAmountLabel" for="movementAmount">Quantidade</label><input id="movementAmount" type="number" min="1" max="2147483647" step="1" required aria-describedby="movementAmountHelp"><small id="movementAmountHelp" class="text-muted">Unidades a adicionar ao saldo.</small></div>
+                <div class="form-group"><label id="movementReasonLabel" for="movementReason">Motivo (opcional)</label><input id="movementReason" placeholder="Descreva a operação"></div>
+            </div>
+            <p id="movementStock" class="text-muted" aria-live="polite">Selecione um produto para consultar SKU e estoque atual.</p>
+            <div class="movement-actions"><button class="btn" type="submit" id="movementSubmit">Registrar movimentação</button><a class="btn secondary" href="inventario.html">Abrir inventário</a></div>
+        </fieldset>
+    </form>
+    <p id="movementFeedback" role="status" aria-live="polite"></p>
+</article>
+<article class="card movement-history">
+    <div class="table-head"><h2>Histórico de estoque</h2><button class="btn secondary" id="refreshMovements" type="button">Atualizar</button></div>
+    <div class="grid movement-filters">
+        <div class="form-group"><label for="historyProduct">Produto</label><select id="historyProduct"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="historyType">Tipo</label><select id="historyType"><option value="">Todos</option><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option><option value="AJUSTE">Ajuste</option></select></div>
+        <div class="form-group"><label for="historySearch">Pesquisar</label><input id="historySearch" placeholder="Nome, SKU, lote, posição, corredor ou fornecedor"></div>
+    </div>
+    <p class="text-muted">Mais recentes primeiro. Em Ajuste, a quantidade representa o saldo global alvo; a coluna Local / lote mostra os saldos do item ajustado. Correções exigem uma nova movimentação.</p>
+    <div class="table-wrap"><table class="movement-table"><thead><tr><th>Data/Hora</th><th>Produto</th><th>SKU</th><th>Tipo</th><th>Quantidade / Ajuste</th><th>Saldo anterior</th><th>Saldo posterior</th><th>Responsável</th><th>Motivo</th><th>Local / lote</th><th>Fornecedor (origem)</th></tr></thead><tbody id="movementHistory"><tr><td colspan="11" class="empty">Carregando histórico...</td></tr></tbody></table></div>
+    <div class="pagination" id="movementPagination"></div>
+</article>
+    </main>
+    <div id="toastContainer" class="toast-container"></div>
+</body>
+</html>

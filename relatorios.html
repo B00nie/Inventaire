@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Relatórios - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/relatorios.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+    <script src="js/common.js" defer></script>
+    <script src="js/relatorios-comum.js" defer></script>
+    <script src="js/relatorios.js" defer></script>
+</head>
+
+<body class="app-layout" data-page="reports">
+    <aside class="sidebar"><div class="brand"><i class="fa-solid fa-warehouse"></i><span>Inventaire</span></div>
+        <ul class="nav">
+            <li><a data-page="dashboard" href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a data-page="inventory" href="inventario.html"><i class="fa-solid fa-boxes-stacked"></i><span>Inventário</span></a></li>
+            <li><a data-page="movements" href="movimentacoes.html"><i class="fa-solid fa-right-left"></i><span>Movimentações</span></a></li>
+            <li><a data-page="locations" href="localizacoes.html"><i class="fa-solid fa-location-dot"></i><span>Localizações</span></a></li>
+            <li><a data-page="counts" href="contagens.html"><i class="fa-solid fa-clipboard-check"></i><span>Contagens</span></a></li>
+            <li><a data-page="suppliers" href="fornecedores.html"><i class="fa-solid fa-truck-field"></i><span>Fornecedores</span></a></li>
+            <li><a data-page="reports" href="relatorios.html"><i class="fa-solid fa-file-lines"></i><span>Relatórios</span></a></li>
+            <li><a data-page="admin" href="administracao.html"><i class="fa-solid fa-users-gear"></i><span>Administração</span></a></li>
+            <li><a data-page="settings" href="configuracao.html"><i class="fa-solid fa-gear"></i><span>Configurações</span></a></li>
+            <li><a data-page="profile" href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu Perfil</span></a></li>
+            <li><a class="logout" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Relatórios</h1>
+                <p class="text-muted">Consultas somente leitura sobre os dados registrados. Nada aqui altera estoque, histórico ou cadastros.</p>
+            </div>
+
+<div class="top-actions">
+    <div class="search-global">
+        <input id="globalSearch" placeholder="Pesquisar no sistema">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="user-chip" id="userChip"></div>
+</div>
+
+        </div>
+
+<div class="report-tabs" role="tablist" aria-label="Relatórios disponíveis">
+    <button type="button" role="tab" id="tab-posicao" aria-controls="panel-posicao" aria-selected="false" data-report="posicao">Posição de estoque</button>
+    <button type="button" role="tab" id="tab-reposicao" aria-controls="panel-reposicao" aria-selected="false" data-report="reposicao">Reposição</button>
+    <button type="button" role="tab" id="tab-movimentacoes" aria-controls="panel-movimentacoes" aria-selected="false" data-report="movimentacoes">Movimentações</button>
+    <button type="button" role="tab" id="tab-divergencias" aria-controls="panel-divergencias" aria-selected="false" data-report="divergencias">Divergências</button>
+    <button type="button" role="tab" id="tab-saidas" aria-controls="panel-saidas" aria-selected="false" data-report="saidas">Saídas no período</button>
+</div>
+
+<!-- Posição de estoque -->
+<section class="card table-card report-panel" role="tabpanel" id="panel-posicao" aria-labelledby="tab-posicao" hidden>
+    <div class="table-head"><h2>Posição atual de estoque</h2></div>
+    <p class="report-meta text-muted">Saldo global de cada produto, estoque mínimo, situação de reposição e distribuição física agregada (lotes, posições e corredores). A localização textual do cadastro é <em>legada</em>; a fonte física é Item → Posição → Corredor.</p>
+    <form class="grid report-filters" data-report-form="posicao">
+        <div class="form-group"><label for="posicaoProduto">Produto</label><select id="posicaoProduto" data-options="produtos"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="posicaoCategoria">Categoria</label><select id="posicaoCategoria" data-options="categorias"><option value="">Todas</option></select></div>
+        <div class="form-group check-group"><input type="checkbox" id="posicaoBaixo"><label for="posicaoBaixo">Somente no limite ou abaixo do mínimo</label></div>
+        <div class="form-group"><label for="posicaoPageSize">Itens por página</label><select id="posicaoPageSize"><option>20</option><option>50</option><option>100</option></select></div>
+    </form>
+    <div class="report-actions"><button class="btn" type="button" data-apply="posicao">Aplicar filtros</button><button class="btn secondary" type="button" data-export="posicao" disabled>Exportar CSV</button></div>
+    <div class="report-meta text-muted" id="posicaoMeta"></div>
+    <dl class="report-summary" id="posicaoSummary"></dl>
+    <p class="report-feedback" id="posicaoFeedback" role="status" aria-live="polite"></p>
+    <div class="table-wrap"><table class="report-table" id="posicaoTable">
+        <caption>Ordenação: nome do produto, depois código interno.</caption>
+        <thead><tr><th scope="col">Produto / SKU</th><th scope="col">Categoria</th><th scope="col">Saldo global</th><th scope="col">Mínimo</th><th scope="col">Situação</th><th scope="col">Distribuição física</th><th scope="col">Validade</th><th scope="col">Localização (legada)</th></tr></thead>
+        <tbody id="posicaoBody"><tr><td colspan="8" class="empty">Selecione o relatório para carregar.</td></tr></tbody>
+    </table></div>
+    <div class="pagination report-pagination" id="posicaoPagination"></div>
+</section>
+
+<!-- Reposição -->
+<section class="card table-card report-panel" role="tabpanel" id="panel-reposicao" aria-labelledby="tab-reposicao" hidden>
+    <div class="table-head"><h2>Produtos no limite ou abaixo do estoque mínimo</h2></div>
+    <p class="report-meta text-muted">Critério: saldo ≤ estoque mínimo. Sugestão = mínimo − saldo, nunca negativa; zero indica produto exatamente no limite. Não há pedido de compra, fornecedor, custo ou previsão de demanda.</p>
+    <form class="grid report-filters" data-report-form="reposicao">
+        <div class="form-group"><label for="reposicaoProduto">Produto</label><select id="reposicaoProduto" data-options="produtos"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="reposicaoCategoria">Categoria</label><select id="reposicaoCategoria" data-options="categorias"><option value="">Todas</option></select></div>
+        <div class="form-group"><label for="reposicaoPageSize">Itens por página</label><select id="reposicaoPageSize"><option>20</option><option>50</option><option>100</option></select></div>
+    </form>
+    <div class="report-actions"><button class="btn" type="button" data-apply="reposicao">Aplicar filtros</button><button class="btn secondary" type="button" data-export="reposicao" disabled>Exportar CSV</button></div>
+    <div class="report-meta text-muted" id="reposicaoMeta"></div>
+    <dl class="report-summary" id="reposicaoSummary"></dl>
+    <p class="report-feedback" id="reposicaoFeedback" role="status" aria-live="polite"></p>
+    <div class="table-wrap"><table class="report-table" id="reposicaoTable">
+        <caption>Ordenação: maior sugestão primeiro, depois menor saldo e código interno.</caption>
+        <thead><tr><th scope="col">Produto / SKU</th><th scope="col">Categoria</th><th scope="col">Saldo global</th><th scope="col">Mínimo</th><th scope="col">Situação</th><th scope="col">Sugestão de reposição</th><th scope="col">Ações</th></tr></thead>
+        <tbody id="reposicaoBody"><tr><td colspan="7" class="empty">Selecione o relatório para carregar.</td></tr></tbody>
+    </table></div>
+    <div class="pagination report-pagination" id="reposicaoPagination"></div>
+</section>
+
+<!-- Movimentações -->
+<section class="card table-card report-panel" role="tabpanel" id="panel-movimentacoes" aria-labelledby="tab-movimentacoes" hidden>
+    <div class="table-head"><h2>Movimentações por período e tipo</h2></div>
+    <p class="report-meta text-muted">Período obrigatório (máximo 366 dias), do início do dia inicial ao fim do dia final no seu fuso horário. Histórico imutável; local e lote são os registrados no instante da operação.</p>
+    <form class="grid report-filters" data-report-form="movimentacoes">
+        <div class="form-group"><label for="movimentacoesInicio">Data inicial</label><input type="date" id="movimentacoesInicio" required></div>
+        <div class="form-group"><label for="movimentacoesFim">Data final (inclusive)</label><input type="date" id="movimentacoesFim" required></div>
+        <div class="form-group"><label for="movimentacoesTipo">Tipo</label><select id="movimentacoesTipo"><option value="">Todos</option><option value="ENTRADA">Entrada</option><option value="SAIDA">Saída</option><option value="AJUSTE">Ajuste</option></select></div>
+        <div class="form-group"><label for="movimentacoesProduto">Produto</label><select id="movimentacoesProduto" data-options="produtos"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="movimentacoesCorredor">Corredor</label><select id="movimentacoesCorredor" data-options="corredores" data-positions="movimentacoesPosicao"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="movimentacoesPosicao">Posição</label><select id="movimentacoesPosicao" data-options="posicoes"><option value="">Todas</option></select></div>
+        <div class="form-group"><label for="movimentacoesLote">Lote (exato)</label><input id="movimentacoesLote" maxlength="200"></div>
+        <div class="form-group"><label for="movimentacoesPageSize">Itens por página</label><select id="movimentacoesPageSize"><option>20</option><option>50</option><option>100</option></select></div>
+    </form>
+    <div class="report-actions"><button class="btn" type="button" data-apply="movimentacoes">Aplicar filtros</button><button class="btn secondary" type="button" data-export="movimentacoes" disabled>Exportar CSV</button></div>
+    <div class="report-meta text-muted" id="movimentacoesMeta"></div>
+    <dl class="report-summary" id="movimentacoesSummary"></dl>
+    <p class="report-feedback" id="movimentacoesFeedback" role="status" aria-live="polite"></p>
+    <div class="table-wrap"><table class="report-table" id="movimentacoesTable">
+        <caption>Ordenação: data/hora mais recente primeiro, depois número da movimentação.</caption>
+        <thead><tr><th scope="col">Data/Hora</th><th scope="col">Produto / SKU</th><th scope="col">Tipo</th><th scope="col">Quantidade</th><th scope="col">Saldo global</th><th scope="col">Variação</th><th scope="col">Local / lote</th><th scope="col">Responsável</th><th scope="col">Motivo</th></tr></thead>
+        <tbody id="movimentacoesBody"><tr><td colspan="9" class="empty">Selecione o relatório para carregar.</td></tr></tbody>
+    </table></div>
+    <div class="pagination report-pagination" id="movimentacoesPagination"></div>
+</section>
+
+<!-- Divergências -->
+<section class="card table-card report-panel" role="tabpanel" id="panel-divergencias" aria-labelledby="tab-divergencias" hidden>
+    <div class="table-head"><h2>Divergências de inventário</h2></div>
+    <p class="report-meta text-muted">Contagens com divergência diferente de zero. Sistêmico, físico, local e status são os do instante da contagem (snapshot), não o saldo atual. Período opcional: deixe as duas datas vazias para todo o histórico.</p>
+    <form class="grid report-filters" data-report-form="divergencias">
+        <div class="form-group"><label for="divergenciasInicio">Data inicial (opcional)</label><input type="date" id="divergenciasInicio"></div>
+        <div class="form-group"><label for="divergenciasFim">Data final (opcional, inclusive)</label><input type="date" id="divergenciasFim"></div>
+        <div class="form-group"><label for="divergenciasSituacao">Situação</label><select id="divergenciasSituacao"><option value="">Todas</option><option value="PENDENTE">Pendente</option><option value="APLICADA">Aplicada</option></select></div>
+        <div class="form-group"><label for="divergenciasSinal">Sinal</label><select id="divergenciasSinal"><option value="">Todos</option><option value="positiva">Positiva (sobra)</option><option value="negativa">Negativa (falta)</option></select></div>
+        <div class="form-group"><label for="divergenciasProduto">Produto</label><select id="divergenciasProduto" data-options="produtos"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="divergenciasCorredor">Corredor</label><select id="divergenciasCorredor" data-options="corredores" data-positions="divergenciasPosicao"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="divergenciasPosicao">Posição</label><select id="divergenciasPosicao" data-options="posicoes"><option value="">Todas</option></select></div>
+        <div class="form-group"><label for="divergenciasLote">Lote (exato)</label><input id="divergenciasLote" maxlength="200"></div>
+        <div class="form-group"><label for="divergenciasPageSize">Itens por página</label><select id="divergenciasPageSize"><option>20</option><option>50</option><option>100</option></select></div>
+    </form>
+    <div class="report-actions"><button class="btn" type="button" data-apply="divergencias">Aplicar filtros</button><button class="btn secondary" type="button" data-export="divergencias" disabled>Exportar CSV</button><a class="btn secondary" href="contagens.html">Abrir contagens</a></div>
+    <div class="report-meta text-muted" id="divergenciasMeta"></div>
+    <dl class="report-summary" id="divergenciasSummary"></dl>
+    <p class="report-feedback" id="divergenciasFeedback" role="status" aria-live="polite"></p>
+    <div class="table-wrap"><table class="report-table" id="divergenciasTable">
+        <caption>Ordenação: data/hora da contagem mais recente primeiro, depois número da contagem.</caption>
+        <thead><tr><th scope="col">Data/Hora</th><th scope="col">Produto / SKU</th><th scope="col">Local / lote</th><th scope="col">Status do item</th><th scope="col">Sistêmico</th><th scope="col">Físico</th><th scope="col">Divergência</th><th scope="col">Situação</th><th scope="col">Responsável</th><th scope="col">Observação</th></tr></thead>
+        <tbody id="divergenciasBody"><tr><td colspan="10" class="empty">Selecione o relatório para carregar.</td></tr></tbody>
+    </table></div>
+    <div class="pagination report-pagination" id="divergenciasPagination"></div>
+</section>
+
+<!-- Saídas no período (indicador aprovado; não é giro) -->
+<section class="card table-card report-panel" role="tabpanel" id="panel-saidas" aria-labelledby="tab-saidas" hidden>
+    <div class="table-head"><h2>Saídas no período</h2></div>
+    <p class="report-meta text-muted">Soma das quantidades das movimentações de <strong>Saída</strong> por produto no período (máximo 366 dias). Este indicador operacional <strong>não é giro de estoque</strong>: não considera estoque médio, custo nem ajustes. Produtos sem saídas no período não aparecem.</p>
+    <form class="grid report-filters" data-report-form="saidas">
+        <div class="form-group"><label for="saidasInicio">Data inicial</label><input type="date" id="saidasInicio" required></div>
+        <div class="form-group"><label for="saidasFim">Data final (inclusive)</label><input type="date" id="saidasFim" required></div>
+        <div class="form-group"><label for="saidasProduto">Produto</label><select id="saidasProduto" data-options="produtos"><option value="">Todos</option></select></div>
+        <div class="form-group"><label for="saidasCategoria">Categoria</label><select id="saidasCategoria" data-options="categorias"><option value="">Todas</option></select></div>
+        <div class="form-group"><label for="saidasPageSize">Itens por página</label><select id="saidasPageSize"><option>20</option><option>50</option><option>100</option></select></div>
+    </form>
+    <div class="report-actions"><button class="btn" type="button" data-apply="saidas">Aplicar filtros</button><button class="btn secondary" type="button" data-export="saidas" disabled>Exportar CSV</button></div>
+    <div class="report-meta text-muted" id="saidasMeta"></div>
+    <dl class="report-summary" id="saidasSummary"></dl>
+    <p class="report-feedback" id="saidasFeedback" role="status" aria-live="polite"></p>
+    <div class="table-wrap"><table class="report-table" id="saidasTable">
+        <caption>Ordenação: maior quantidade de saída primeiro, depois código interno do produto.</caption>
+        <thead><tr><th scope="col">Produto / SKU</th><th scope="col">Categoria</th><th scope="col">Eventos de saída</th><th scope="col">Unidades saídas</th></tr></thead>
+        <tbody id="saidasBody"><tr><td colspan="4" class="empty">Selecione o relatório para carregar.</td></tr></tbody>
+    </table></div>
+    <div class="pagination report-pagination" id="saidasPagination"></div>
+</section>
+
+    </main>
+    <div id="toastContainer" class="toast-container"></div>
+</body>
+</html>

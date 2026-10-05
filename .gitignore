@@ -1,0 +1,19 @@
+# Configuração local e segredos (o modelo versionado é backend/exemple.env).
+.env
+*.env.local
+
+# Ambiente virtual e bytecode.
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+
+# Evidências locais de homologação (logs, hashes, capturas, perfis Chrome).
+.validation/
+*_browser_*/
+*chrome_*/
+
+# Cópias PREENCHIDAS do seed (contêm hashes bcrypt reais). O modelo
+# backend/assets/02_dados_iniciais_inventaire.sql continua versionado.
+*.local.sql
+*.preenchido.sql

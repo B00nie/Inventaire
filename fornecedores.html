@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="icon" type="image/svg+xml" href="assets/images/inventaire.svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>Fornecedores - Inventaire</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/movimentacoes.css">
+    <link rel="stylesheet" href="css/fornecedores.css">
+
+    <script src="js/api.js"></script>
+    <script src="js/theme.js"></script>
+
+    <script src="js/common.js" defer></script>
+    <script src="js/fornecedores.js" defer></script>
+</head>
+
+<body class="app-layout" data-page="suppliers">
+    <aside class="sidebar"><div class="brand"><i class="fa-solid fa-warehouse"></i><span>Inventaire</span></div>
+        <ul class="nav">
+            <li><a data-page="dashboard" href="dashboard.html"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a></li>
+            <li><a data-page="inventory" href="inventario.html"><i class="fa-solid fa-boxes-stacked"></i><span>Inventário</span></a></li>
+            <li><a data-page="movements" href="movimentacoes.html"><i class="fa-solid fa-right-left"></i><span>Movimentações</span></a></li>
+            <li><a data-page="locations" href="localizacoes.html"><i class="fa-solid fa-location-dot"></i><span>Localizações</span></a></li>
+            <li><a data-page="counts" href="contagens.html"><i class="fa-solid fa-clipboard-check"></i><span>Contagens</span></a></li>
+            <li><a data-page="suppliers" href="fornecedores.html"><i class="fa-solid fa-truck-field"></i><span>Fornecedores</span></a></li>
+            <li><a data-page="reports" href="relatorios.html"><i class="fa-solid fa-file-lines"></i><span>Relatórios</span></a></li>
+            <li><a data-page="admin" href="administracao.html"><i class="fa-solid fa-users-gear"></i><span>Administração</span></a></li>
+            <li><a data-page="settings" href="configuracao.html"><i class="fa-solid fa-gear"></i><span>Configurações</span></a></li>
+            <li><a data-page="profile" href="perfil.html"><i class="fa-solid fa-user"></i><span>Meu Perfil</span></a></li>
+            <li><a class="logout" href="#" onclick="logout();return false"><i class="fa-solid fa-right-from-bracket"></i><span>Sair</span></a></li>
+        </ul>
+    </aside>
+
+    <main class="main">
+        <div class="topbar">
+            <div class="page-title">
+                <h1>Fornecedores</h1>
+                <p class="text-muted">Cadastre fornecedores e consulte a origem dos produtos recebidos.</p>
+            </div>
+
+<div class="top-actions">
+    <div class="search-global">
+        <input id="globalSearch" placeholder="Pesquisar no sistema">
+        <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+
+    <div class="user-chip" id="userChip"></div>
+</div>
+
+        </div>
+
+<article class="card">
+ <div class="table-head"><h2>Fornecedores cadastrados</h2><button class="btn secondary" id="refreshSuppliers" type="button">Atualizar</button></div>
+ <p id="supplierFeedback" role="status" aria-live="polite"></p>
+ <form id="supplierSearchForm"><div class="grid supplier-filters">
+  <div class="form-group"><label for="supplierSearch">Pesquisar razão social, CNPJ ou contato</label><input id="supplierSearch" maxlength="200"></div>
+  <div class="form-group"><label for="supplierStatus">Situação</label><select id="supplierStatus"><option value="">Todos</option><option value="sim">Ativos</option><option value="nao">Inativos</option></select></div>
+ </div><button class="btn" type="submit">Pesquisar</button></form>
+ <p class="text-muted supplier-note">CNPJ: <span class="cnpj-policy">Validação de formato; não verifica dígitos verificadores, existência ou situação cadastral.</span> Fornecedor inativo continua no histórico, mas não pode ser escolhido em novos recebimentos.</p>
+ <div class="table-wrap"><table class="supplier-table"><caption class="sr-only">Ordenados por razão social</caption><thead><tr><th>Razão social</th><th>CNPJ</th><th>Contato</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="suppliersBody"><tr><td colspan="5">Carregando...</td></tr></tbody></table></div>
+ <div class="pagination supplier-pagination" id="supplierPagination"></div>
+</article>
+
+<article class="card supplier-section" id="supplierFormCard" data-permission="suppliers:manage">
+ <h2 id="supplierFormTitle">Cadastrar fornecedor</h2>
+ <form id="supplierForm"><fieldset id="supplierFields" disabled>
+  <input id="supplierId" type="hidden">
+  <div class="grid supplier-form-grid">
+   <div class="form-group"><label for="supplierName">Razão social</label><input id="supplierName" maxlength="200" required></div>
+   <div class="form-group"><label for="supplierCnpj">CNPJ</label><input id="supplierCnpj" maxlength="40" required aria-describedby="supplierCnpjHelp" placeholder="12.345.678/0001-95"><small id="supplierCnpjHelp" class="text-muted">Aceita separadores . / - e o formato alfanumérico. Validação de formato; não verifica dígitos verificadores, existência ou situação cadastral.</small></div>
+   <div class="form-group"><label for="supplierContact">Contato (opcional)</label><input id="supplierContact" maxlength="200" placeholder="Nome, e-mail ou telefone"></div>
+   <div class="form-group"><label><input id="supplierActive" type="checkbox" checked> Ativo</label></div>
+  </div>
+  <div class="movement-actions"><button type="submit" class="btn">Salvar fornecedor</button> <button type="reset" class="btn secondary">Limpar / novo</button></div>
+ </fieldset></form>
+</article>
+
+<article class="card supplier-section" id="receiptsCard" hidden>
+ <div class="table-head"><h2 id="receiptsTitle">Recebimentos</h2><button class="btn secondary" id="closeReceipts" type="button">Fechar</button></div>
+ <p class="text-muted">Somente ENTRADAs vinculadas, mais recentes primeiro. Razão social e CNPJ são os registrados no momento do recebimento.</p>
+ <p id="receiptsFeedback" role="status" aria-live="polite"></p>
+ <div class="table-wrap"><table class="supplier-table receipts-table"><thead><tr><th>Data/Hora</th><th>Produto</th><th>SKU</th><th>Quantidade</th><th>Local / lote</th><th>Responsável</th><th>Origem registrada</th></tr></thead><tbody id="receiptsBody"></tbody></table></div>
+ <div class="pagination supplier-pagination" id="receiptsPagination"></div>
+</article>
+    </main>
+    <div id="toastContainer" class="toast-container"></div>
+</body>
+</html>
