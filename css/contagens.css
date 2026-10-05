@@ -1,0 +1,19 @@
+#countFields{border:0;padding:0;margin:0;min-width:0}
+.count-notice{margin-bottom:24px;color:var(--warning);background:var(--warning-soft)}
+.count-filters{grid-template-columns:repeat(3,minmax(0,1fr));margin:20px 0}
+.count-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:16px 0}
+.count-info[hidden]{display:none}
+.count-info div{min-width:0;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-soft)}
+.count-info dt{font-size:12px;color:var(--muted)}
+.count-info dd{margin:4px 0 0;font-weight:600;overflow-wrap:anywhere}
+.count-effect{padding:12px;border-left:4px solid var(--warning);background:var(--warning-soft);border-radius:8px;line-height:1.6}
+.count-apply-box{width:min(640px,96vw)}
+.count-table{min-width:1180px}
+.count-table td{overflow-wrap:anywhere;max-width:260px}
+.count-table .btn{padding:8px 12px;white-space:nowrap}
+.divergence-positive{color:var(--success);font-weight:600}
+.divergence-negative{color:var(--danger);font-weight:600}
+#countPagination button{width:auto;min-width:80px;padding:8px 12px}
+#countFeedback,#historyFeedback,#applyFeedback{margin-top:12px}
+#countFeedback[data-error="true"],#historyFeedback[data-error="true"],#applyFeedback[data-error="true"]{color:var(--danger)}
+@media(max-width:800px){.count-filters{grid-template-columns:1fr}}

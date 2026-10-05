@@ -1,0 +1,11 @@
+.movement-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.movement-filters{grid-template-columns:repeat(3,minmax(0,1fr));margin:20px 0}
+#movementFields{border:0;padding:0;margin:0;min-width:0}
+.movement-actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}
+.movement-history{margin-top:24px}
+.movement-table{min-width:1100px}
+.movement-table td{overflow-wrap:anywhere;max-width:300px}
+#movementPagination button{width:auto;min-width:80px;padding:8px 12px}
+#movementFeedback{margin-top:16px}
+#movementFeedback[data-error="true"]{color:var(--danger)}
+@media(max-width:800px){.movement-form-grid,.movement-filters{grid-template-columns:1fr}}

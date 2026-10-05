@@ -1,0 +1,46 @@
+/* Etapa 2F — Relatórios (e utilitários compartilhados com o Dashboard). Usa os tokens de tema
+   de components.css; nenhuma cor fixa fora deles, para os temas claro e escuro. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.divergence-positive{color:var(--success);font-weight:600}
+.divergence-negative{color:var(--danger);font-weight:600}
+[data-error="true"]{color:var(--danger)}
+
+.report-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.report-tabs [role="tab"]{width:auto;padding:10px 16px;border:1px solid var(--border);border-radius:999px;
+    background:var(--surface);color:var(--text);font-weight:600;cursor:pointer}
+.report-tabs [role="tab"][aria-selected="true"]{background:var(--primary);border-color:var(--primary);color:#fff}
+.report-tabs [role="tab"]:focus-visible{outline:3px solid color-mix(in srgb,var(--primary) 45%,transparent);outline-offset:2px}
+.report-panel[hidden]{display:none}
+.report-filters{grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;padding:20px 24px 0}
+.report-filters .form-group{min-width:0}
+.report-filters .check-group{display:flex;flex-direction:row;align-items:center;gap:8px;padding-top:26px}
+.report-filters .check-group input{width:auto;flex:0 0 auto;margin:0}
+.report-filters .check-group label{margin:0}
+.report-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding:16px 24px 0}
+.report-actions .btn{width:auto}
+.report-meta{padding:12px 24px 0;line-height:1.6}
+.report-meta p{margin:0}
+.report-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:16px 24px 0}
+.report-summary div{min-width:0;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-soft)}
+.report-summary dt{font-size:12px;color:var(--muted)}
+.report-summary dd{margin:4px 0 0;font-weight:700;overflow-wrap:anywhere}
+.report-summary:empty{display:none}
+.report-feedback{padding:12px 24px 0;margin:0}
+.report-table{min-width:980px}
+.report-table td{overflow-wrap:break-word;max-width:280px}
+.report-table td small{color:var(--muted)}
+.report-table caption{caption-side:top;text-align:left;padding:14px 12px 4px;color:var(--muted);font-size:13px}
+.report-pagination{flex-wrap:wrap;align-items:center}
+.report-pagination button{width:auto;min-width:84px;padding:8px 12px}
+.report-pagination button:disabled{opacity:.5;cursor:not-allowed}
+.report-pagination span{color:var(--muted)}
+.legacy-location{font-style:italic}
+
+@media(max-width:1100px){.report-filters{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){
+    .report-filters{grid-template-columns:1fr;padding:16px 16px 0}
+    .report-filters .check-group{padding-top:0}
+    .report-actions,.report-meta,.report-feedback{padding-left:16px;padding-right:16px}
+    .report-summary{margin:16px 16px 0}
+    .report-tabs [role="tab"]{flex:1 1 calc(50% - 8px)}
+}

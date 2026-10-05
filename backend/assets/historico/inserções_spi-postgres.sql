@@ -1,0 +1,13 @@
+-- Inventaire - Dados iniciais (Etapa 2A.1).
+-- Adaptado do projeto anterior; este arquivo nao representa mais o schema SPI.
+-- Nome historico preservado para consulta manual no pgAdmin.
+--
+-- Sem seeds nesta etapa: nenhum produto ficticio, usuario ou senha padrao.
+-- Nao e necessario executar este arquivo; ele contem somente instrucoes.
+-- Primeiro, aplicar manualmente tabelas_spi-postgres.sql no banco inventaire.
+-- inventaire_schema.sql e uma alternativa equivalente: nao aplicar os dois.
+-- Depois de confirmar o schema e retomar a homologacao, criar o administrador
+-- pelo bootstrap interativo, a partir da raiz do projeto, em um terminal:
+-- .\.venv\Scripts\python.exe -B backend/bootstrap_admin.py --database inventaire
+-- O bootstrap solicita os dados, le a senha sem eco e gera o hash bcrypt.
+-- Os produtos serao cadastrados pela aplicacao na proxima homologacao.

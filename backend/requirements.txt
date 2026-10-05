@@ -1,0 +1,16 @@
+flask
+flask-cors
+flask-socketio
+bcrypt
+numpy
+python-dotenv
+psycopg2-binary
+opencv-python==4.10.0.84
+ultralytics
+redis
+rq
+simple-websocket
+flask-session
+paho-mqtt
+pyyaml
+albumentations

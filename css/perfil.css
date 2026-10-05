@@ -1,0 +1,15 @@
+/* Meu Perfil: usa só os tokens do tema (claro/escuro) de components.css. */
+.profile-layout{grid-template-columns:320px minmax(0,1fr)}
+.profile-summary{text-align:center;align-self:start;min-width:0;overflow-wrap:anywhere}
+.profile-avatar{width:110px;height:110px;margin:0 auto 18px;font-size:34px}
+.profile-summary .badge{margin-top:12px}
+.profile-readonly-title{margin:22px 0 10px;font-size:15px;color:var(--muted)}
+.form-group input.profile-readonly{background:transparent;border-style:dashed;color:var(--muted);cursor:default}
+.form-group input:disabled{opacity:.7;cursor:not-allowed}
+.profile-status{min-height:22px;margin:16px 0 0;color:var(--muted)}
+.profile-status[data-type="danger"]{color:var(--danger)}
+.profile-status[data-type="success"]{color:var(--success)}
+.profile-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px;margin-top:14px}
+.profile-actions .btn:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:960px){.profile-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:420px){.profile-actions .btn{flex:1 1 100%;justify-content:center}}

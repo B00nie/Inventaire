@@ -1,0 +1,11 @@
+.location-section{margin-top:24px}
+.location-forms{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:24px}
+.location-forms fieldset{border:0;padding:0;min-width:0}
+.location-forms .form-group{margin:14px 0}
+.location-forms input[type=checkbox]{width:auto}
+.location-forms label:has(input[type=checkbox]){display:flex;align-items:center;gap:8px}
+#locationFeedback{margin:16px 0}
+#locationFeedback[data-error=true]{color:var(--danger)}
+.location-table{min-width:720px}
+.location-table td{overflow-wrap:anywhere;max-width:260px}
+@media(max-width:800px){.location-forms{grid-template-columns:1fr}}
