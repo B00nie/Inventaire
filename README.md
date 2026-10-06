@@ -215,18 +215,14 @@ Os e-mails são **contas de exemplo para avaliação**, não caixas postais veri
 
 PostgreSQL e Redis precisam estar ativos. `app.py` carrega `backend/.env`.
 
-**Frontend.** Sirva **somente os arquivos públicos**, numa origem permitida pelo CORS. **Não** publique a raiz do repositório com `python -m http.server`: isso exporia `backend/.env`, o código, os SQLs e `.validation/`. Um modo suportado, só com a biblioteca padrão:
+**Frontend.** Execute o comando quando o backend estiver ativo, semore ative primeiro o backend e depois o frontend.
 
 ```powershell
 # Copia apenas o que é público para uma pasta separada e serve essa pasta.
-$pub = "$env:TEMP\inventaire_public"
-Remove-Item $pub -Recurse -Force -ErrorAction SilentlyContinue
-New-Item -ItemType Directory $pub | Out-Null
-Copy-Item *.html $pub; Copy-Item js, css, assets $pub -Recurse
-.\.venv\Scripts\python.exe -m http.server 8080 --bind 127.0.0.1 --directory $pub
+npx serve .
 ```
 
-Abra `http://localhost:8080/login.html` (não use `file://`). Com `DEV_INSECURE=true` o CORS aceita `localhost`/`127.0.0.1` em qualquer porta.
+Vai abrir `http://localhost:3000/login`.
 
 ## 8. Perfis e permissões (RF09)
 
